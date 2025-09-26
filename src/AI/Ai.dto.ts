@@ -8,9 +8,11 @@ class AiDTO {
 class AiResponseDTO {
     @IsString()
     readonly response:string
+    readonly tokens:string
 
     constructor(data:any) {
         this.response = data.content[0].text;
+        this.tokens = data.content
     }
 }
 

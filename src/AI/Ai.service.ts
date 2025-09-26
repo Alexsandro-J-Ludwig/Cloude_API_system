@@ -17,9 +17,8 @@ class AIService {
     }
 
     async sendQuestion(dto: AiDTO){
-        const data = await this.anthropic.messages.create({
+        const data = await this.anthropic.messages.countTokens({
             model: "claude-sonnet-4-20250514",
-            max_tokens: 1024,
             messages: [{ role: "user", content: dto.question}]
         })
 
