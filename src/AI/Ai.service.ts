@@ -1,29 +1,39 @@
-import Anthropic from "@anthropic-ai/sdk";
-import { AiDTO, AiResponseDTO } from "./Ai.dto";
-import { Injectable } from "@nestjs/common";
+import ollama, { Ollama } from 'ollama';
+
+import { AiDTO, AiResponseDTO } from './Ai.dto';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 class AIService {
-    anthropic:Anthropic
+  client: Ollama;
 
-    constructor(){
-        const apiKey = process.env.KEY;
-        if (!apiKey) {
-            throw new Error("ANTHROPIC API KEY not found. Make sure KEY is set in your .env file.");
-        }
-        this.anthropic = new Anthropic({
-            apiKey: apiKey
-        });
+  constructor() {
+    this.client = new Ollama({
+      host: 'https://ollama.com',
+      headers: {
+        Authorization: 'Bearer ' + process.env.OLLAMA_API_KEY,
+      },
+    });
+  }
+
+  async sendQuestion(dto: AiDTO) {
+    if (!dto.question?.trim()) {
+      return new AiResponseDTO('⚠️ Você enviou uma pergunta vazia!');
     }
 
-    async sendQuestion(dto: AiDTO){
-        const data = await this.anthropic.messages.countTokens({
-            model: "claude-sonnet-4-20250514",
-            messages: [{ role: "user", content: dto.question}]
-        })
+    const response = await this.client.chat({
+      model: 'glm-5:cloud',
+      messages: [
+        {
+          role: 'user',
+          content: dto.question!,
+        },
+    ],
+    format: "json"
+    });
 
-        return new AiResponseDTO(data);
-    }
+    return new AiResponseDTO(response.message.content);
+  }
 }
 
-export { AIService }
+export { AIService };
