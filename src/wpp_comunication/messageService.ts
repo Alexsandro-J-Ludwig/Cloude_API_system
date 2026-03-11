@@ -1,10 +1,9 @@
 import ollama, { Ollama } from 'ollama';
 
-import { AiDTO, AiResponseDTO } from './Ai.dto';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-class AIService {
+class MessageService {
   client: Ollama;
 
   constructor() {
@@ -16,24 +15,23 @@ class AIService {
     });
   }
 
-  async sendQuestion(dto: AiDTO) {
-    if (!dto.question?.trim()) {
-      return new AiResponseDTO('⚠️ Você enviou uma pergunta vazia!');
+  async sendQuestion(from: string, prompt: string) {
+    if (!prompt) {
+      throw new Error('⚠️ Você enviou uma pergunta vazia!');
     }
 
     const response = await this.client.chat({
       model: 'glm-5:cloud',
       messages: [
         {
-          role: 'user',
-          content: dto.question!,
+          role: "user",
+          content: prompt!,
         },
     ],
-    format: "json"
     });
 
-    return new AiResponseDTO(response.message.content);
+    return response.message.content;
   }
 }
 
-export { AIService };
+export { MessageService };

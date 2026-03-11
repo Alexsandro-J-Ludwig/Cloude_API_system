@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { AiModule } from './AI/Ai.module';
+import { WppModule } from './wpp_comunication/wpp.module';
 
 @Module({
-  imports: [AiModule],
+  imports: [WppModule],
 })
 export class AppModule {}

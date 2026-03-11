@@ -398,3 +398,5 @@ Temporary Items
 dist
 .webpack
 .serverless/**/*.zip
+.wwebjs_auth/
+.wwebjs_cache/
